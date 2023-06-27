@@ -35,6 +35,11 @@
                 HorizontalOptions="Center"
                 FontSize="30" />
 
+            <Label 
+                x:Name="LocationLabel"
+                HorizontalOptions="Center"
+                FontSize="30" />
+
         </VerticalStackLayout>
     </ScrollView>
 
