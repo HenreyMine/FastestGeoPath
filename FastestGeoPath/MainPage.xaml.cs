@@ -38,9 +38,9 @@ public partial class MainPage : ContentPage
         {
             //timerTime = new TimeSpan();
             timer.Start();
-            isTimerGoing = true;
+            //isTimerGoing = true;
 
-            UpdateTimerOnScreen();
+            //UpdateTimerOnScreen();
 
             locationTimer.Start();
             await GetCurrentLocation();

@@ -50,5 +50,14 @@
             Timer.Start();
             IsGoing = true;
         }
+
+        /// <summary>
+        /// Stop.
+        /// </summary>
+        public void Stop()
+        {
+            Timer.Stop();
+            IsGoing = false;
+        }
     }
 }
