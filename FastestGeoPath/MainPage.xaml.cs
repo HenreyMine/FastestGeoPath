@@ -2,9 +2,9 @@
 
 public partial class MainPage : ContentPage
 {
-    bool isTimerGoing;
-    TimeSpan timerTime;
-    readonly IDispatcherTimer timer;
+    //bool isTimerGoing;
+    //TimeSpan timerTime;
+    //readonly IDispatcherTimer timer;
 
     readonly string textStart = "Press button to start tracking path";
     readonly string textStop = "Press button to stop tracking path";
@@ -16,14 +16,14 @@ public partial class MainPage : ContentPage
 
     public MainPage()
     {
-        timer = Dispatcher.CreateTimer();
-        timer.Interval = TimeSpan.FromSeconds(1);
-        timer.Tick += (s, e) =>
-        {
-            timerTime += TimeSpan.FromSeconds(1);
+        //timer = Dispatcher.CreateTimer();
+        //timer.Interval = TimeSpan.FromSeconds(1);
+        //timer.Tick += (s, e) =>
+        //{
+            //timerTime += TimeSpan.FromSeconds(1);
 
-            UpdateTimerOnScreen();
-        };
+            //UpdateTimerOnScreen();
+        //};
 
         locationTimer = Dispatcher.CreateTimer();
         locationTimer.Interval = TimeSpan.FromSeconds(10);
@@ -36,7 +36,7 @@ public partial class MainPage : ContentPage
     {
         if (!isTimerGoing)
         {
-            timerTime = new TimeSpan();
+            //timerTime = new TimeSpan();
             timer.Start();
             isTimerGoing = true;
 
