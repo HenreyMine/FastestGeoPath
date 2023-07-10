@@ -8,7 +8,7 @@
         /// <summary>
         /// Indication that the timer is running.
         /// </summary>
-        public bool IsGoing { get; private set; }
+        public bool IsGoing => Timer.IsRunning;
 
         /// <summary>
         /// Time of timer.
@@ -45,19 +45,11 @@
         /// <summary>
         /// Start.
         /// </summary>
-        public void Start()
-        {
-            Timer.Start();
-            IsGoing = true;
-        }
+        public void Start() => Timer.Start();
 
         /// <summary>
         /// Stop.
         /// </summary>
-        public void Stop()
-        {
-            Timer.Stop();
-            IsGoing = false;
-        }
+        public void Stop() => Timer.Stop();
     }
 }
