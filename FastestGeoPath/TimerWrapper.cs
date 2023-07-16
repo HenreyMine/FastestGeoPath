@@ -1,9 +1,9 @@
 ﻿namespace FastestGeoPath
 {
     /// <summary>
-    /// Path timer.
+    /// Wrapper for IDispatcherTimer.
     /// </summary>
-    public class PathTimer
+    public class TimerWrapper
     {
         /// <summary>
         /// Indication that the timer is running.
@@ -23,17 +23,18 @@
         /// <summary>
         /// Standard interval.
         /// </summary>
-        private readonly TimeSpan standardInterval = TimeSpan.FromSeconds(1);
+        private readonly TimeSpan StandardInterval = TimeSpan.FromSeconds(1);
 
         /// <summary>
-        /// Constructor.
+        /// Adds a timer to the dispatcher.
         /// </summary>
         /// <param name="dispatcher">Dispatcher where timer added.</param>
-        public void AddTimer(IDispatcher dispatcher)
+        /// <param name="interval">Interval for timer. Default: 1 second.</param>
+        public void AddToDispatcher(IDispatcher dispatcher, TimeSpan? interval = null)
         {
             Timer = dispatcher.CreateTimer();
-            Timer.Interval = standardInterval;
-            Timer.Tick += (s, e) => Time += standardInterval;
+            Timer.Interval = interval ?? StandardInterval;
+            Timer.Tick += (s, e) => Time += StandardInterval;
         }
 
         /// <summary>

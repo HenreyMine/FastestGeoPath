@@ -2,9 +2,7 @@
 
 public partial class MainPage : ContentPage
 {
-    //bool isTimerGoing;
-    //TimeSpan timerTime;
-    //readonly IDispatcherTimer timer;
+    readonly TimerWrapper pathTimer = new();
 
     readonly string textStart = "Press button to start tracking path";
     readonly string textStop = "Press button to stop tracking path";
@@ -16,14 +14,8 @@ public partial class MainPage : ContentPage
 
     public MainPage()
     {
-        //timer = Dispatcher.CreateTimer();
-        //timer.Interval = TimeSpan.FromSeconds(1);
-        //timer.Tick += (s, e) =>
-        //{
-            //timerTime += TimeSpan.FromSeconds(1);
-
-            //UpdateTimerOnScreen();
-        //};
+        pathTimer.AddToDispatcher(Dispatcher);
+        pathTimer.AddEventHandler(UpdateTimerOnScreenEventHandler);
 
         locationTimer = Dispatcher.CreateTimer();
         locationTimer.Interval = TimeSpan.FromSeconds(10);
@@ -34,13 +26,10 @@ public partial class MainPage : ContentPage
 
     private async void OnTrackingClicked(object sender, EventArgs e)
     {
-        if (!isTimerGoing)
+        if (!pathTimer.IsGoing)
         {
-            //timerTime = new TimeSpan();
-            timer.Start();
-            //isTimerGoing = true;
-
-            //UpdateTimerOnScreen();
+            pathTimer.Start();
+            UpdateTimerOnScreenEventHandler();
 
             locationTimer.Start();
             await GetCurrentLocation();
@@ -50,17 +39,16 @@ public partial class MainPage : ContentPage
         }
         else
         {
-            timer.Stop();
+            pathTimer.Stop();
             locationTimer.Stop();
-            isTimerGoing = false;
             InstructionLabel.Text = textStart;
             SemanticScreenReader.Announce(InstructionLabel.Text);
         }
     }
 
-    private void UpdateTimerOnScreen()
+    private void UpdateTimerOnScreenEventHandler(object eventObject = null, EventArgs eventArgs = null)
     {
-        TimerLabel.Text = timerTime.ToString();
+        TimerLabel.Text = pathTimer.Time.ToString();
         SemanticScreenReader.Announce(TimerLabel.Text);
     }
 
