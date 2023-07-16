@@ -3,23 +3,18 @@
 public partial class MainPage : ContentPage
 {
     readonly TimerWrapper pathTimer = new();
+    readonly TimerWrapper geoTimer = new();
 
     readonly string textStart = "Press button to start tracking path";
     readonly string textStop = "Press button to stop tracking path";
-
-    private CancellationTokenSource _cancelTokenSource;
-    private bool _isCheckingLocation;
-
-    readonly IDispatcherTimer locationTimer;
 
     public MainPage()
     {
         pathTimer.AddToDispatcher(Dispatcher);
         pathTimer.AddEventHandler(UpdateTimerOnScreenEventHandler);
 
-        locationTimer = Dispatcher.CreateTimer();
-        locationTimer.Interval = TimeSpan.FromSeconds(10);
-        locationTimer.Tick += async (s, e) => await GetCurrentLocation();
+        geoTimer.AddToDispatcher(Dispatcher, TimeSpan.FromSeconds(10));
+        //geoTimer.AddEventHandler();
 
         InitializeComponent();
     }
@@ -31,18 +26,15 @@ public partial class MainPage : ContentPage
             pathTimer.Start();
             UpdateTimerOnScreenEventHandler();
 
-            locationTimer.Start();
-            await GetCurrentLocation();
+            geoTimer.Start();
 
-            InstructionLabel.Text = textStop;
-            SemanticScreenReader.Announce(InstructionLabel.Text);
+            UpdateInstructionLabelText(textStop);
         }
         else
         {
             pathTimer.Stop();
-            locationTimer.Stop();
-            InstructionLabel.Text = textStart;
-            SemanticScreenReader.Announce(InstructionLabel.Text);
+            geoTimer.Stop();
+            UpdateInstructionLabelText(textStart);
         }
     }
 
@@ -52,17 +44,20 @@ public partial class MainPage : ContentPage
         SemanticScreenReader.Announce(TimerLabel.Text);
     }
 
+    private void UpdateInstructionLabelText(string text)
+    {
+        InstructionLabel.Text = text;
+        SemanticScreenReader.Announce(InstructionLabel.Text);
+    }
+
+
     public async Task GetCurrentLocation()
     {
         try
         {
-            _isCheckingLocation = true;
-
             GeolocationRequest request = new(GeolocationAccuracy.High, TimeSpan.FromSeconds(10));
 
-            _cancelTokenSource = new CancellationTokenSource();
-
-            Location location = await Geolocation.Default.GetLocationAsync(request, _cancelTokenSource.Token);
+            Location location = await Geolocation.Default.GetLocationAsync(request, new CancellationToken());
 
             if (location != null)
             {
@@ -78,16 +73,6 @@ public partial class MainPage : ContentPage
         {
             // Unable to get location
         }
-        finally
-        {
-            _isCheckingLocation = false;
-        }
-    }
-
-    public void CancelRequest()
-    {
-        if (_isCheckingLocation && _cancelTokenSource != null && _cancelTokenSource.IsCancellationRequested == false)
-            _cancelTokenSource.Cancel();
     }
 }
 
