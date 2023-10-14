@@ -1,25 +1,51 @@
 ﻿namespace FastestGeoPath;
 
+/// <summary>
+/// Main page of application.
+/// </summary>
 public partial class MainPage : ContentPage
 {
+    /// <summary>
+    /// Timer for path time.
+    /// </summary>
     readonly TimerWrapper pathTimer = new();
+
+    /// <summary>
+    /// Timer for getting geo in path. 
+    /// </summary>
     readonly TimerWrapper geoTimer = new();
 
-    readonly string textStart = "Press button to start tracking path";
-    readonly string textStop = "Press button to stop tracking path";
-
+    /// <summary>
+    /// Constructor.
+    /// </summary>
     public MainPage()
     {
         pathTimer.AddToDispatcher(Dispatcher);
         pathTimer.AddEventHandler(UpdateTimerOnScreenEventHandler);
 
         geoTimer.AddToDispatcher(Dispatcher, TimeSpan.FromSeconds(10));
-        //geoTimer.AddEventHandler();
+        geoTimer.AddEventHandler(UpdateLocationOnScreenEventHandler);
 
         InitializeComponent();
     }
 
-    private async void OnTrackingClicked(object sender, EventArgs e)
+    /// <summary>
+    /// Event that update time of path.
+    /// </summary>
+    /// <param name="eventObject">Event object.</param>
+    /// <param name="eventArgs">Event arguments.</param>
+    private void UpdateTimerOnScreenEventHandler(object eventObject = null, EventArgs eventArgs = null)
+    {
+        TimerLabel.Text = pathTimer.Time.ToString();
+        SemanticScreenReader.Announce(TimerLabel.Text);
+    }
+
+    /// <summary>
+    /// Event after clicked on tracking button.
+    /// </summary>
+    /// <param name="sender">Sender of event.</param>
+    /// <param name="e">Event arguments.</param>
+    private void OnTrackingClicked(object sender, EventArgs e)
     {
         if (!pathTimer.IsGoing)
         {
@@ -28,51 +54,54 @@ public partial class MainPage : ContentPage
 
             geoTimer.Start();
 
-            UpdateInstructionLabelText(textStop);
+            UpdateInstructionLabelText("Press button to stop tracking path");
         }
         else
         {
             pathTimer.Stop();
             geoTimer.Stop();
-            UpdateInstructionLabelText(textStart);
+            UpdateInstructionLabelText("Press button to start tracking path");
         }
     }
 
-    private void UpdateTimerOnScreenEventHandler(object eventObject = null, EventArgs eventArgs = null)
-    {
-        TimerLabel.Text = pathTimer.Time.ToString();
-        SemanticScreenReader.Announce(TimerLabel.Text);
-    }
-
+    /// <summary>
+    /// Update text of instruction for tracking button.
+    /// </summary>
+    /// <param name="text">Instruction text.</param>
     private void UpdateInstructionLabelText(string text)
     {
         InstructionLabel.Text = text;
         SemanticScreenReader.Announce(InstructionLabel.Text);
     }
 
-
-    public async Task GetCurrentLocation()
+    /// <summary>
+    /// Event that update location on screen.
+    /// </summary>
+    /// <param name="eventObject">Object of event.</param>
+    /// <param name="eventArgs">Event arguments.</param>
+    public async void UpdateLocationOnScreenEventHandler(object eventObject = null, EventArgs eventArgs = null)
     {
         try
         {
-            GeolocationRequest request = new(GeolocationAccuracy.High, TimeSpan.FromSeconds(10));
-
-            Location location = await Geolocation.Default.GetLocationAsync(request, new CancellationToken());
-
+            var location = await GeoService.GetLocation(GeolocationAccuracy.High, TimeSpan.FromSeconds(10));
             if (location != null)
-            {
-                LocationLabel.Text = $"Latitude: {location.Latitude}, Longitude: {location.Longitude}, Altitude: {location.Altitude}";
-                SemanticScreenReader.Announce(LocationLabel.Text);
-            }
+                LocationLabel.Text =
+                    $"Latitude: {location.Latitude}, Longitude: {location.Longitude}, Altitude: {location.Altitude}";
         }
-        // Catch one of the following exceptions:
-        //   FeatureNotSupportedException
-        //   FeatureNotEnabledException
-        //   PermissionException
-        catch (Exception ex)
+        catch (FeatureNotSupportedException)
         {
-            // Unable to get location
+            LocationLabel.Text = "Sorry, but getting location not supported on this platform";
         }
+        catch (FeatureNotEnabledException)
+        {
+            LocationLabel.Text = "Geo location not enabled. Please, turn it on";
+        }
+        catch (PermissionException)
+        {
+            LocationLabel.Text = "Can't get geo location. Give permission for this app";
+        }
+
+        SemanticScreenReader.Announce(LocationLabel.Text);
     }
 }
 
