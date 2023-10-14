@@ -1,4 +1,6 @@
-﻿namespace FastestGeoPath;
+﻿using FastestGeoPath.Timers;
+
+namespace FastestGeoPath;
 
 /// <summary>
 /// Main page of application.
@@ -58,8 +60,8 @@ public partial class MainPage : ContentPage
         }
         else
         {
-            pathTimer.Stop();
-            geoTimer.Stop();
+            pathTimer.Reset();
+            geoTimer.Reset();
             UpdateInstructionLabelText("Press button to start tracking path");
         }
     }
