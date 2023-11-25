@@ -3,19 +3,19 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="FastestGeoPath.MainPage">
 
-    <ScrollView>
-        <VerticalStackLayout
+  <ScrollView>
+    <VerticalStackLayout
             Spacing="25"
             Padding="30,0"
             VerticalOptions="Center">
 
-            <Image
+      <Image
                 Source="dotnet_bot.png"
                 SemanticProperties.Description="Cute dot net bot waving hi to you!"
                 HeightRequest="200"
                 HorizontalOptions="Center" />
 
-            <Label
+      <Label
                 x:Name="InstructionLabel"
                 Text="Press button to start tracking path"
                 SemanticProperties.HeadingLevel="Level1"
@@ -23,24 +23,24 @@
                 HorizontalOptions="Center"
                 HorizontalTextAlignment="Center" />
 
-            <Button
+      <Button
                 x:Name="CounterBtn"
                 Text="Click me"
                 SemanticProperties.Hint="Control path tracking"
                 Clicked="OnTrackingClicked"
                 HorizontalOptions="Center" />
 
-            <Label 
+      <Label 
                 x:Name="TimerLabel"
                 HorizontalOptions="Center"
                 FontSize="30" />
 
-            <Label 
+      <Label 
                 x:Name="LocationLabel"
                 HorizontalOptions="Center"
                 FontSize="30" />
 
-        </VerticalStackLayout>
-    </ScrollView>
+    </VerticalStackLayout>
+  </ScrollView>
 
 </ContentPage>
