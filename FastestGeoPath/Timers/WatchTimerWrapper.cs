@@ -27,4 +27,13 @@ public class WatchTimerWrapper : TimerWrapper
     var notNullTimeToAdd = timeToAdd ??= StandardTimeToAdd;
     Timer.Tick += (s, e) => Time += notNullTimeToAdd;
   }
+
+  /// <summary>
+  /// Stop and reset time of timer.
+  /// </summary>
+  public void Reset()
+  {
+    Stop();
+    Time = TimeSpan.Zero;
+  }
 }

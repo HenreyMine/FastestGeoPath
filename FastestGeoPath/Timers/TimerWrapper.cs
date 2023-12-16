@@ -1,4 +1,6 @@
-﻿namespace FastestGeoPath.Timers;
+﻿using FastestGeoPath.Exceptions;
+
+namespace FastestGeoPath.Timers;
 
 /// <summary>
 /// Wrapper for IDispatcherTimer.
@@ -8,12 +10,12 @@ public class TimerWrapper
   /// <summary>
   /// Indication that the timer is running.
   /// </summary>
-  public bool IsGoing => Timer.IsRunning;
+  public bool IsGoing => Timer?.IsRunning ?? throw new NoDispatcherForTimerException();
 
   /// <summary>
   /// An instance of the system timer.
   /// </summary>
-  protected IDispatcherTimer Timer { get; set; }
+  protected IDispatcherTimer? Timer { get; set; }
 
   /// <summary>
   /// Standard interval.
@@ -35,24 +37,30 @@ public class TimerWrapper
   /// Add event handler, that will called on every timer operation.
   /// </summary>
   /// <param name="eventHandler"></param>
-  public void AddEventHandler(EventHandler eventHandler) => Timer.Tick += eventHandler;
+  public void AddEventHandler(EventHandler eventHandler)
+  {
+    if (Timer is null)
+      throw new NoDispatcherForTimerException();
+    Timer.Tick += eventHandler;
+  }
 
   /// <summary>
   /// Start timer.
   /// </summary>
-  public void Start() => Timer.Start();
+  public void Start()
+  {
+    if (Timer is null)
+      throw new NoDispatcherForTimerException(); 
+    Timer.Start();
+  }
 
   /// <summary>
   /// Stop timer.
   /// </summary>
-  public void Stop() => Timer.Stop();
-
-  /// <summary>
-  /// Stop and reset time of timer.
-  /// </summary>
-  public void Reset()
+  public void Stop()
   {
-    Stop();
-    //Time = TimeSpan.Zero;
+    if (Timer is null)
+      throw new NoDispatcherForTimerException();
+    Timer.Stop();
   }
 }

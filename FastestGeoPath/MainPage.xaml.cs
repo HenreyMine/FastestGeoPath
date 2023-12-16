@@ -61,7 +61,7 @@ public partial class MainPage : ContentPage
     else
     {
       pathTimer.Reset();
-      geoTimer.Reset();
+      geoTimer.Stop();
       UpdateInstructionLabelText("Press button to start tracking path");
     }
   }
